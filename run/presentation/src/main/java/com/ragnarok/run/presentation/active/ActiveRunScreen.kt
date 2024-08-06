@@ -33,6 +33,7 @@ import com.ragnarok.core.presentation.designsystem.components.RuniqueScaffold
 import com.ragnarok.core.presentation.designsystem.components.RuniqueToolbar
 import com.ragnarok.run.presentation.R
 import com.ragnarok.run.presentation.active.components.RunDataCard
+import com.ragnarok.run.presentation.active.maps.TrackerMap
 import com.ragnarok.run.presentation.util.hasLocationPermission
 import com.ragnarok.run.presentation.util.hasNotificationPermission
 import com.ragnarok.run.presentation.util.shouldShowLocationPermissionRationale
@@ -127,7 +128,7 @@ private fun ActiveRunScreen(
                     onAction(ActiveRunAction.OnToggleRunClick)
                 },
                 iconSize = 20.dp,
-                contentDescription = if(state.shouldTrack) {
+                contentDescription = if (state.shouldTrack) {
                     stringResource(id = R.string.pause_run)
                 } else {
                     stringResource(id = R.string.start_run)
@@ -140,6 +141,13 @@ private fun ActiveRunScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
+            TrackerMap(
+                isRunFinished = state.isRunFinished,
+                currentLocation = state.currentLocation,
+                locations = state.runData.locations,
+                onSnapshot = { },
+                modifier = Modifier.fillMaxSize()
+            )
             RunDataCard(
                 elapsedTime = state.elapsedTime,
                 runData = state.runData,
