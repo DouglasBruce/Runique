@@ -4,6 +4,7 @@ import android.app.Application
 import com.ragnarok.auth.data.di.authDataModule
 import com.ragnarok.auth.presentation.di.authViewModelModule
 import com.ragnarok.core.data.di.coreDataModule
+import com.ragnarok.core.database.di.databaseModule
 import com.ragnarok.run.location.di.locationModule
 import com.ragnarok.run.presentation.di.runPresentationModule
 import com.ragnarok.runique.di.appModule
@@ -33,7 +34,8 @@ class RuniqueApp: Application() {
                 appModule,
                 coreDataModule,
                 runPresentationModule,
-                locationModule
+                locationModule,
+                databaseModule
             )
         }
     }
