@@ -42,8 +42,8 @@ annotation = "1.8.2"
 projectApplicationId = "com.ragnarok.runique"
 projectVersionName = "1.0"
 projectMinSdkVersion = "25"
-projectTargetSdkVersion = "35"
-projectCompileSdkVersion = "35"
+projectTargetSdkVersion = "34"
+projectCompileSdkVersion = "34"
 projectVersionCode = "1"
 
 [libraries]

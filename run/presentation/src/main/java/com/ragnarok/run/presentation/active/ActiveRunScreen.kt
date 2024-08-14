@@ -6,6 +6,7 @@ import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -33,6 +34,7 @@ import com.ragnarok.core.presentation.designsystem.components.RuniqueFloatingAct
 import com.ragnarok.core.presentation.designsystem.components.RuniqueOutlinedActionButton
 import com.ragnarok.core.presentation.designsystem.components.RuniqueScaffold
 import com.ragnarok.core.presentation.designsystem.components.RuniqueToolbar
+import com.ragnarok.core.presentation.ui.ObserveAsEvents
 import com.ragnarok.run.presentation.R
 import com.ragnarok.run.presentation.active.components.RunDataCard
 import com.ragnarok.run.presentation.active.maps.TrackerMap
@@ -46,14 +48,39 @@ import java.io.ByteArrayOutputStream
 
 @Composable
 fun ActiveRunScreenRoot(
+    onFinish: () -> Unit,
+    onBack: () -> Unit,
     onServiceToggle: (isServiceRunning: Boolean) -> Unit,
     viewModel: ActiveRunViewModel = koinViewModel(),
 ) {
+    val context = LocalContext.current
+    ObserveAsEvents(flow = viewModel.events) { event ->
+        when (event) {
+            is ActiveRunEvent.Error -> {
+                Toast.makeText(
+                    context, event.error.asString(context), Toast.LENGTH_LONG
+                ).show()
+            }
+
+            ActiveRunEvent.RunSaved -> onFinish()
+        }
+    }
+
     ActiveRunScreen(
         state = viewModel.state,
         onServiceToggle = onServiceToggle,
-        onAction = viewModel::onAction
-    )
+        onAction = { action ->
+            when (action) {
+                is ActiveRunAction.OnBackClick -> {
+                    if (!viewModel.state.hasStartedRunning) {
+                        onBack()
+                    }
+                }
+
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        })
 }
 
 @Composable
@@ -125,36 +152,32 @@ private fun ActiveRunScreen(
         }
     }
 
-    RuniqueScaffold(
-        withGradient = false,
-        topAppBar = {
-            RuniqueToolbar(
-                showBackButton = true,
-                title = stringResource(id = R.string.active_run),
-                onBackClick = {
-                    onAction(ActiveRunAction.OnBackClick)
-                },
-            )
-        },
-        floatingActionButton = {
-            RuniqueFloatingActionButton(
-                icon = if (state.shouldTrack) {
-                    StopIcon
-                } else {
-                    StartIcon
-                },
-                onClick = {
-                    onAction(ActiveRunAction.OnToggleRunClick)
-                },
-                iconSize = 20.dp,
-                contentDescription = if (state.shouldTrack) {
-                    stringResource(id = R.string.pause_run)
-                } else {
-                    stringResource(id = R.string.start_run)
-                }
-            )
-        }
-    ) { padding ->
+    RuniqueScaffold(withGradient = false, topAppBar = {
+        RuniqueToolbar(
+            showBackButton = true,
+            title = stringResource(id = R.string.active_run),
+            onBackClick = {
+                onAction(ActiveRunAction.OnBackClick)
+            },
+        )
+    }, floatingActionButton = {
+        RuniqueFloatingActionButton(
+            icon = if (state.shouldTrack) {
+                StopIcon
+            } else {
+                StartIcon
+            },
+            onClick = {
+                onAction(ActiveRunAction.OnToggleRunClick)
+            },
+            iconSize = 20.dp,
+            contentDescription = if (state.shouldTrack) {
+                stringResource(id = R.string.pause_run)
+            } else {
+                stringResource(id = R.string.start_run)
+            }
+        )
+    }) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -168,9 +191,7 @@ private fun ActiveRunScreen(
                     val stream = ByteArrayOutputStream()
                     stream.use {
                         bmp.compress(
-                            Bitmap.CompressFormat.JPEG,
-                            80,
-                            it
+                            Bitmap.CompressFormat.JPEG, 80, it
                         )
                     }
                     onAction(ActiveRunAction.OnRunProcessed(stream.toByteArray()))
@@ -236,10 +257,8 @@ private fun ActiveRunScreen(
                     onClick = {
                         onAction(ActiveRunAction.DismissRationaleDialog)
                         permissionLauncher.requestRuniquePermissions(context)
-                    }
-                )
-            }
-        )
+                    })
+            })
     }
 }
 
@@ -250,8 +269,7 @@ private fun ActivityResultLauncher<Array<String>>.requestRuniquePermissions(
     val hasNotificationPermission = context.hasNotificationPermission()
 
     val locationPermissions = arrayOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
+        Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
     )
     val notificationPermission = if (Build.VERSION.SDK_INT >= 33) {
         arrayOf(Manifest.permission.POST_NOTIFICATIONS)
@@ -271,10 +289,6 @@ private fun ActivityResultLauncher<Array<String>>.requestRuniquePermissions(
 @Composable
 private fun ActiveRunScreenPreview() {
     RuniqueTheme {
-        ActiveRunScreen(
-            state = ActiveRunState(),
-            onServiceToggle = {},
-            onAction = {}
-        )
+        ActiveRunScreen(state = ActiveRunState(), onServiceToggle = {}, onAction = {})
     }
 }
