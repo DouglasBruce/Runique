@@ -1,6 +1,8 @@
 package com.ragnarok.runique
 
 import android.app.Application
+import android.content.Context
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.ragnarok.auth.data.di.authDataModule
 import com.ragnarok.auth.presentation.di.authViewModelModule
 import com.ragnarok.core.data.di.coreDataModule
@@ -44,5 +46,10 @@ class RuniqueApp : Application() {
                 runDataModule
             )
         }
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        SplitCompat.install(this)
     }
 }
