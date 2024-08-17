@@ -19,7 +19,7 @@ fun Double.toFormattedKm(): String {
 }
 
 fun Duration.toFormattedPace(distanceKm: Double): String {
-    if(this == Duration.ZERO || distanceKm <= 0.0) {
+    if (this == Duration.ZERO || distanceKm <= 0.0) {
         return "-"
     }
 
@@ -36,6 +36,10 @@ fun Double.toFormattedKmh(): String {
 
 fun Int.toFormattedMeters(): String {
     return "$this m"
+}
+
+fun Int?.toFormattedHeartRate(): String {
+    return if (this != null) "$this bpm" else "-"
 }
 
 private fun Double.roundToDecimals(decimalCount: Int): Double {
