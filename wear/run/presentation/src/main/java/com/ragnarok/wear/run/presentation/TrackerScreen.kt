@@ -3,6 +3,7 @@ package com.ragnarok.wear.run.presentation
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -29,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.Icon
-import androidx.wear.compose.material3.IconButtonColors
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.OutlinedIconButton
@@ -40,6 +40,7 @@ import com.ragnarok.core.presentation.designsystem.FinishIcon
 import com.ragnarok.core.presentation.designsystem.PauseIcon
 import com.ragnarok.core.presentation.designsystem.StartIcon
 import com.ragnarok.core.presentation.designsystemwear.RuniqueTheme
+import com.ragnarok.core.presentation.ui.ObserveAsEvents
 import com.ragnarok.core.presentation.ui.formatted
 import com.ragnarok.core.presentation.ui.toFormattedHeartRate
 import com.ragnarok.core.presentation.ui.toFormattedKm
@@ -50,6 +51,20 @@ import org.koin.androidx.compose.koinViewModel
 fun TrackerScreenRoot(
     viewModel: TrackerViewModel = koinViewModel(),
 ) {
+    val context = LocalContext.current
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is TrackerEvent.Error -> {
+                Toast.makeText(
+                    context,
+                    event.message.asString(context),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            TrackerEvent.RunFinished -> Unit
+        }
+    }
     TrackerScreenRootScreen(
         state = viewModel.state,
         onAction = viewModel::onAction,
