@@ -13,6 +13,7 @@ import com.ragnarok.core.domain.util.Result
 import com.ragnarok.core.presentation.ui.asUiText
 import com.ragnarok.run.domain.LocationDataCalculator
 import com.ragnarok.run.domain.RunningTracker
+import com.ragnarok.run.domain.WatchConnector
 import com.ragnarok.run.presentation.active.service.ActiveRunService
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,8 @@ import java.time.ZonedDateTime
 
 class ActiveRunViewModel(
     private val runningTracker: RunningTracker,
-    private val runRepository: RunRepository
+    private val runRepository: RunRepository,
+    private val watchConnector: WatchConnector
 ) : ViewModel() {
 
     var state by mutableStateOf(

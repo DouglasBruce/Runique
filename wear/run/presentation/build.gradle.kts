@@ -27,7 +27,7 @@ dependencies {
     implementation(projects.core.presentation.designsystemwear)
     implementation(projects.core.presentation.ui)
     implementation(projects.core.domain)
-//    implementation(projects.core.connectivity.domain)
+    implementation(projects.core.connectivity.domain)
 //    implementation(projects.core.notification)
     implementation(projects.wear.run.domain)
 }
