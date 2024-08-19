@@ -16,7 +16,7 @@ Runique is a multi-module run tracking application for phones and Wear OS device
 
 ## What's covered?
 
-In this course bundle, you will learn these concepts/technologies:
+In this course bundle I learned the following concepts/technologies:
 - Project planning
 - Software architecture theory
 - Multi-module architecture
