@@ -34,7 +34,8 @@ class ActiveRunService : Service() {
     private val baseNotification by lazy {
         NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(com.ragnarok.core.presentation.designsystem.R.drawable.logo)
-            .setContentTitle(getString(R.string.active_run))
+            .setContentText(getString(R.string.active_run))
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
     }
 
     private val elapsedTime by inject<StateFlow<Duration>>()
@@ -72,7 +73,7 @@ class ActiveRunService : Service() {
                 getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
             }
             val notification = baseNotification
-                .setContentText("00:00:00")
+                .setContentTitle("00:00:00")
                 .setContentIntent(pendingIntent)
                 .build()
 
@@ -84,7 +85,7 @@ class ActiveRunService : Service() {
     private fun updateNotification() {
         elapsedTime.onEach { elapsedTime ->
             val notification = baseNotification
-                .setContentText(elapsedTime.formatted())
+                .setContentTitle(elapsedTime.formatted())
                 .build()
 
             notificationManager.notify(1, notification)
