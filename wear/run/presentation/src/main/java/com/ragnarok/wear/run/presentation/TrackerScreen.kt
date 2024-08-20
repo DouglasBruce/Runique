@@ -47,6 +47,8 @@ import com.ragnarok.core.presentation.ui.ObserveAsEvents
 import com.ragnarok.core.presentation.ui.formatted
 import com.ragnarok.core.presentation.ui.toFormattedHeartRate
 import com.ragnarok.core.presentation.ui.toFormattedKm
+import com.ragnarok.wear.run.presentation.ambient.AmbientObserver
+import com.ragnarok.wear.run.presentation.ambient.ambientMode
 import com.ragnarok.wear.run.presentation.components.RunDataCard
 import org.koin.androidx.compose.koinViewModel
 
@@ -125,11 +127,21 @@ private fun TrackerScreenRootScreen(
         permissionLauncher.launch(permissions.toTypedArray())
     }
 
+    AmbientObserver(
+        onEnterAmbient = {
+            onAction(TrackerAction.OnEnterAmbientMode(it.burnInProtectionRequired))
+        },
+        onExitAmbient = {
+            onAction(TrackerAction.OnExitAmbientMode)
+        }
+    )
+
     if (state.isConnectedPhoneNearby) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
+                .background(MaterialTheme.colorScheme.background)
+                .ambientMode(state.isAmbientMode, state.burnInProtectionRequired),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -161,7 +173,7 @@ private fun TrackerScreenRootScreen(
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = state.elapsedDuration.formatted(),
+                text = state.elapsedDuration.formatted(isAmbientMode = state.isAmbientMode),
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimary,
@@ -169,14 +181,14 @@ private fun TrackerScreenRootScreen(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.primary)
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (state.isTrackable) {
+            if (state.isTrackable && !state.isAmbientMode) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     ToggleRunButton(
                         isRunActive = state.isRunActive,
                         onClick = {
@@ -198,7 +210,16 @@ private fun TrackerScreenRootScreen(
                             )
                         }
                     }
-                } else {
+                }
+            }
+            if (!state.isTrackable) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = stringResource(id = R.string.open_active_run_screen),
                         textAlign = TextAlign.Center,
@@ -272,6 +293,26 @@ private fun TrackerScreenRootScreenPreview() {
                 hasStartedRunning = true,
                 canTrackHeartRate = true,
                 isConnectedPhoneNearby = true
+            ),
+            onAction = {},
+        )
+    }
+}
+
+@WearPreviewDevices
+@Composable
+private fun TrackerScreenRootScreenAmbientPreview() {
+    RuniqueTheme {
+        TrackerScreenRootScreen(
+            state = TrackerState(
+                distanceMeters = 100,
+                heartRate = 76,
+                isRunActive = false,
+                isTrackable = true,
+                hasStartedRunning = true,
+                canTrackHeartRate = true,
+                isConnectedPhoneNearby = true,
+                isAmbientMode = true
             ),
             onAction = {},
         )
