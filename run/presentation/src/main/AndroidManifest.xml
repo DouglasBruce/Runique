@@ -12,7 +12,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
         <service
-            android:name=".active.service.ActiveRunService"
+            android:name="com.ragnarok.core.notification.ActiveRunService"
             android:foregroundServiceType="location" />
     </application>
 

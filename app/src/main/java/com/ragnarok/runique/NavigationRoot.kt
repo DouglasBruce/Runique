@@ -11,8 +11,8 @@ import androidx.navigation.navigation
 import com.ragnarok.auth.presentation.intro.IntroScreenRoot
 import com.ragnarok.auth.presentation.login.LoginScreenRoot
 import com.ragnarok.auth.presentation.register.RegisterScreenRoot
+import com.ragnarok.core.notification.ActiveRunService
 import com.ragnarok.run.presentation.active.ActiveRunScreenRoot
-import com.ragnarok.run.presentation.active.service.ActiveRunService
 import com.ragnarok.run.presentation.overview.RunOverviewScreenRoot
 
 @Composable
