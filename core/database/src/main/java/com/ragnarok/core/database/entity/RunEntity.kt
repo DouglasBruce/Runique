@@ -16,5 +16,7 @@ data class RunEntity(
     val totalElevationMeters: Int,
     val mapPictureUrl: String?,
     @PrimaryKey(autoGenerate = false)
-    val id: String = ObjectId().toHexString()
+    val id: String = ObjectId().toHexString(),
+    val avgHeartRate: Int?,
+    val maxHeartRate: Int?
 )

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ragnarok.core.presentation.designsystem.RuniqueTheme
 import com.ragnarok.core.presentation.ui.formatted
+import com.ragnarok.core.presentation.ui.toFormattedHeartRate
 import com.ragnarok.core.presentation.ui.toFormattedKm
 import com.ragnarok.core.presentation.ui.toFormattedPace
 import com.ragnarok.run.domain.RunData
@@ -58,6 +59,12 @@ fun RunDataCard(
             RunDataItem(
                 title = stringResource(id = R.string.distance),
                 value = (runData.distanceMeters / 1000.0).toFormattedKm(),
+                modifier = Modifier
+                    .defaultMinSize(minWidth = 75.dp)
+            )
+            RunDataItem(
+                title = stringResource(id = R.string.heart_rate),
+                value = runData.heartRates.lastOrNull().toFormattedHeartRate(),
                 modifier = Modifier
                     .defaultMinSize(minWidth = 75.dp)
             )
@@ -105,7 +112,8 @@ private fun RunDataCardPreview() {
             elapsedTime = 10.minutes,
             runData = RunData(
                 distanceMeters = 3425,
-                pace = 3.minutes
+                pace = 3.minutes,
+                heartRates = listOf(150)
             )
         )
     }
