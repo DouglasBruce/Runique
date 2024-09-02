@@ -4,8 +4,12 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlinx.coroutines.core)
     implementation(projects.core.domain)
     implementation(projects.core.connectivity.domain)
-    testImplementation(projects.core.test)
+    implementation(projects.run.domain)
+
+    implementation(libs.kotlinx.coroutines.core)
+
+    implementation(libs.junit5.api)
+    implementation(libs.coroutines.test)
 }
